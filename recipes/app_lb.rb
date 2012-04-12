@@ -30,8 +30,11 @@ pool_members.map! do |member|
   server_ip = begin
     if member.attribute?('cloud')
       if node.attribute?('cloud') && (member['cloud']['provider'] == node['cloud']['provider'])
-         if node['ec2'] and member['ec2'] and node['ec2']['placement_availability_zone'] == member['ec2']['placement_availability_zone']
-           backup = false
+         if node['ec2'] and member['ec2']
+           if node['ec2']['placement_availability_zone'] == member['ec2']['placement_availability_zone']
+             backup = false
+           else
+             backup = true
          else
            backup = true
          end
