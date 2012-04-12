@@ -26,18 +26,25 @@ pool_members << node if node.run_list.roles.include?(node['haproxy']['app_server
 # pool members are in the same cloud
 # TODO refactor this logic into library...see COOK-494
 pool_members.map! do |member|
+  backup = false
   server_ip = begin
     if member.attribute?('cloud')
       if node.attribute?('cloud') && (member['cloud']['provider'] == node['cloud']['provider'])
+         if node['ec2'] and member['ec2'] and node['ec2']['placement_availability_zone'] == member['ec2']['placement_availability_zone']
+           backup = false
+         else
+           backup = true
+         end
          member['cloud']['local_ipv4']
       else
+        backup = true
         member['cloud']['public_ipv4']
       end
     else
       member['ipaddress']
     end
   end
-  {:ipaddress => server_ip, :hostname => member['hostname']}
+  {:ipaddress => server_ip, :hostname => member['hostname'], :backup => backup}
 end
 
 package "haproxy" do
