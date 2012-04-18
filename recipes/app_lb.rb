@@ -35,6 +35,7 @@ pool_members.map! do |member|
              backup = false
            else
              backup = true
+           end
          else
            backup = true
          end
