@@ -48,6 +48,7 @@ pool_members.map! do |member|
       member['ipaddress']
     end
   end
+  server_ip ||= member['ipaddress']
   {:ipaddress => server_ip, :hostname => member['hostname'], :backup => backup}
 end
 
